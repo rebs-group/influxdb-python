@@ -13,8 +13,8 @@ import socket
 import time
 import threading
 import random
-import requests
-import requests.exceptions
+import http_requests
+import http_requests.exceptions
 from sys import version_info
 
 from influxdb.line_protocol import make_lines
@@ -90,7 +90,7 @@ class InfluxDBClient(object):
 
         self.use_udp = use_udp
         self.udp_port = udp_port
-        self._session = requests.Session()
+        self._session = http_requests.Session()
         if use_udp:
             self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -212,7 +212,7 @@ localhost:8086/databasename', timeout=5, udp_port=159)
             the request, defaults to 200
         :type expected_response_code: int
         :returns: the response from the request
-        :rtype: :class:`requests.Response`
+        :rtype: :class:`http_requests.Response`
         :raises InfluxDBServerError: if the response code is any server error
             code (5xx)
         :raises InfluxDBClientError: if the response code is not the
@@ -245,7 +245,7 @@ localhost:8086/databasename', timeout=5, udp_port=159)
                     timeout=self._timeout
                 )
                 break
-            except requests.exceptions.ConnectionError as e:
+            except http_requests.exceptions.ConnectionError as e:
                 if i < 2:
                     continue
                 else:

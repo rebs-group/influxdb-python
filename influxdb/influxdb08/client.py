@@ -4,8 +4,8 @@ Python client for InfluxDB
 """
 import json
 import socket
-import requests
-import requests.exceptions
+import http_requests
+import http_requests.exceptions
 import warnings
 from sys import version_info
 
@@ -21,7 +21,7 @@ if version_info[0] == 3:
 else:
     from urlparse import urlparse
 
-session = requests.Session()
+session = http_requests.Session()
 
 
 class InfluxDBClientError(Exception):
@@ -242,8 +242,8 @@ class InfluxDBClient(object):
                     timeout=self._timeout
                 )
                 break
-            except (requests.exceptions.ConnectionError,
-                    requests.exceptions.Timeout) as e:
+            except (http_requests.exceptions.ConnectionError,
+                    http_requests.exceptions.Timeout) as e:
                 if i < 2:
                     continue
                 else:

@@ -20,8 +20,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-import requests
-import requests.exceptions
+import http_requests
+import http_requests.exceptions
 import socket
 import time
 import requests_mock
@@ -37,7 +37,7 @@ from influxdb.client import InfluxDBServerError
 
 
 def _build_response_object(status_code=200, content=""):
-    resp = requests.Response()
+    resp = http_requests.Response()
     resp.status_code = status_code
     resp._content = content.encode("utf8")
     return resp
@@ -631,7 +631,7 @@ class TestInfluxDBClient(unittest.TestCase):
                   'name': 'fsfdsdf', 'replicaN': 2}]
             )
 
-    @mock.patch('requests.Session.request')
+    @mock.patch('http_requests.Session.request')
     def test_request_retry(self, mock_request):
         """Tests that two connection errors will be handled"""
 
@@ -642,9 +642,9 @@ class TestInfluxDBClient(unittest.TestCase):
                 self.i += 1
 
                 if self.i < 3:
-                    raise requests.exceptions.ConnectionError
+                    raise http_requests.exceptions.ConnectionError
                 else:
-                    r = requests.Response()
+                    r = http_requests.Response()
                     r.status_code = 204
                     return r
 
@@ -655,7 +655,7 @@ class TestInfluxDBClient(unittest.TestCase):
             self.dummy_points
         )
 
-    @mock.patch('requests.Session.request')
+    @mock.patch('http_requests.Session.request')
     def test_request_retry_raises(self, mock_request):
         """Tests that three connection errors will not be handled"""
 
@@ -666,9 +666,9 @@ class TestInfluxDBClient(unittest.TestCase):
                 self.i += 1
 
                 if self.i < 4:
-                    raise requests.exceptions.ConnectionError
+                    raise http_requests.exceptions.ConnectionError
                 else:
-                    r = requests.Response()
+                    r = http_requests.Response()
                     r.status_code = 200
                     return r
 
@@ -676,7 +676,7 @@ class TestInfluxDBClient(unittest.TestCase):
 
         cli = InfluxDBClient(database='db')
 
-        with self.assertRaises(requests.exceptions.ConnectionError):
+        with self.assertRaises(http_requests.exceptions.ConnectionError):
             cli.write_points(self.dummy_points)
 
     def test_get_list_users(self):
